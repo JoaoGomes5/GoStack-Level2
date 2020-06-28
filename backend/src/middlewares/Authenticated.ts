@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 import authConfig from '../config/Auth';
-
+import AppError from '../errors/AppError';
 
 interface tokenPayload {
   iat: number,
@@ -14,7 +14,7 @@ export default function ensureAuthenticated(request : Request, response: Respons
     const authHeader= request.headers.authorization;
 
     if(!authHeader) {
-      throw new Error("WT token is missing");
+      throw new AppError("WT token is missing", 401);
     }
 
     const [, token] = authHeader.split(' ');
@@ -31,7 +31,7 @@ export default function ensureAuthenticated(request : Request, response: Respons
       
       return next();
     }catch (err) {
-      throw new Error("indalid JWT token");
+      throw new AppError("indalid JWT token", 401);
       
     }
   
